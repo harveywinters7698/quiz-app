@@ -1,23 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { CssBaseline, Box, Container } from "@mui/material";
+import { lightBlue } from "@mui/material/colors";
+
+import QuestionCard from "./QuestionCard";
+import Result from "./Result";
+import questions from "./data/questions";
 
 function App() {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const finishedQuiz = currentQuestionIndex === questions.length;
+  const currentQuestion = questions[currentQuestionIndex];
+
+  const goToNext = () => {
+    setCurrentQuestionIndex((prevState) => prevState + 1);
+  }
+
+  const submitAnswer = (value) => {
+    setAnswers((prevState) => [...prevState, value]);
+    goToNext();
+  }
+
+  const restartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setAnswers([]);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <CssBaseline />
+      <Box sx={{
+        backgroundColor: lightBlue[500],
+        height: "100vh", display: "flex", alignItems: "center"
+      }}>
+        <Container maxWidth="sm">
+          {finishedQuiz ? <Result restartQuiz={restartQuiz} answers={answers} /> : <QuestionCard question={currentQuestion} questionNumber={currentQuestionIndex + 1}
+            submitAnswer={submitAnswer} />}
+
+        </Container>
+      </Box>
     </div>
   );
 }
